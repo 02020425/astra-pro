@@ -1,124 +1,145 @@
-# Astra-Pro - 生产级 AI 代理系统
+# Astra-Pro — 教培 AI Agent 系统
 
-一个生产就绪的 AI 代理系统模板，具备全面的工程能力。
-
-**当前使用模型：通义千问（Qwen）**
-
-## 特性
-
-- **FastAPI 服务** - 带有 OpenAPI 文档的 RESTful API
-- **结构化日志** - 带上下文的 JSON 日志
-- **指标与监控** - Prometheus 集成
-- **提示词管理** - 版本控制的提示词
-- **工具调用** - 函数调用支持
-- **速率限制** - 请求限流
-- **健康检查** - 存活和就绪探针
-- **单元测试** - 全面的测试覆盖
+基于通义千问（Qwen）的智能教辅后端服务，提供辅导答疑、作业批改、学习规划三类 AI Agent。
 
 ## 快速开始
 
 ```bash
-# 1. 克隆项目
-cd astra-pro
-
-# 2. 安装依赖
+# 安装依赖
 pip install -e .
 
-# 3. 配置环境
+# 配置 API Key
 cp .env.example .env
-# 编辑 .env 文件添加你的 DashScope API 密钥
-# DASHSCOPE_API_KEY=your-api-key-here
+# 编辑 .env，填入阿里云 DashScope API Key：
+#   DASHSCOPE_API_KEY=sk-xxxxxxxx
 
-# 4. 运行服务器
+# 启动服务
 python -m astra_pro.main
-
-# 5. 访问 API
-# OpenAPI 文档: http://localhost:8000/docs
-# 健康检查: http://localhost:8000/health
+# → http://localhost:8000/docs
 ```
+
+## 使用示例
+
+### 辅导答疑
+
+```bash
+curl -X POST http://localhost:8000/api/v1/chat \
+  -H "Content-Type: application/json" \
+  -d '{"message": "因式分解 x²-9 怎么算？", "agent_type": "tutor"}'
+```
+
+```json
+{
+  "response": "x²-9 是平方差形式，公式 a²-b²=(a+b)(a-b)...",
+  "agent_type": "tutor"
+}
+```
+
+### 作业批改
+
+```bash
+curl -X POST http://localhost:8000/api/v1/chat \
+  -H "Content-Type: application/json" \
+  -d '{"agent_type": "homework_grader",
+       "message": "题目：解方程 2x+3=7\n我的答案是 x=2，请批改"}'
+```
+
+### 学习规划
+
+```bash
+curl -X POST http://localhost:8000/api/v1/chat \
+  -H "Content-Type: application/json" \
+  -d '{"agent_type": "study_planner",
+       "message": "高三，数学目前 90 分，目标 120，每天可用 2 小时"}'
+```
+
+## API 端点
+
+| 端点 | 方法 | 说明 |
+|------|------|------|
+| `/health` | GET | 健康检查 |
+| `/api/v1/chat` | POST | 向 Agent 发送消息 |
+| `/api/v1/agents` | GET | 列出所有 Agent |
+| `/api/v1/agents/{type}` | GET | 获取指定 Agent 详情 |
+| `/api/v1/prompts` | GET | 列出所有提示词模板 |
+| `/api/v1/tools` | GET | 列出可用工具 |
+| `/metrics` | GET | Prometheus 指标 |
+
+### Chat 请求体
+
+| 字段 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| `message` | string | 是 | 用户输入 |
+| `agent_type` | string | 否 | `tutor` / `homework_grader` / `study_planner`，默认 `tutor` |
+| `history` | ChatMessage[] | 否 | 对话历史，每条含 `role` 和 `content` |
+
+## 三类 Agent
+
+| Agent | 类型名 | 适用场景 |
+|-------|--------|---------|
+| 学习辅导老师 | `tutor` | 学科答疑、概念解释、解题思路 |
+| 作业批改老师 | `homework_grader` | 批改答案、指出错误、给出改进建议 |
+| 学习规划师 | `study_planner` | 制定学习计划、推荐资源、时间安排 |
+
+## 工具（Function Calling）
+
+| 工具 | 功能 |
+|------|------|
+| `calculator` | 数学表达式计算，支持 `math` 模块函数 |
+| `knowledge_base` | 按学科/分类查询知识点（数学/英语/物理） |
 
 ## 项目结构
 
 ```
 astra-pro/
 ├── astra_pro/
-│   ├── __init__.py
-│   ├── main.py              # FastAPI 入口
-│   ├── config/              # 配置
-│   │   ├── __init__.py
-│   │   └── settings.py      # Pydantic 设置
-│   ├── llm/                 # LLM 集成
-│   │   ├── __init__.py
-│   │   └── client.py        # 带重试的 LLM 客户端
-│   ├── agents/              # 代理实现
-│   │   ├── __init__.py
-│   │   ├── base.py          # 代理基类
-│   │   └── analyzer.py      # 示例分析代理
-│   ├── prompts/             # 提示词模板
-│   │   ├── __init__.py
-│   │   └── templates.py     # 版本化提示词
-│   ├── tools/               # 工具实现
-│   │   ├── __init__.py
-│   │   └── calculator.py    # 示例工具
-│   ├── logging/             # 日志配置
-│   │   ├── __init__.py
-│   │   └── setup.py         # Structlog 设置
-│   ├── metrics/             # 监控
-│   │   ├── __init__.py
-│   │   └── collector.py     # Prometheus 指标
-│   ├── api/                 # API 端点
-│   │   ├── __init__.py
-│   │   ├── v1/
-│   │   │   ├── __init__.py
-│   │   │   ├── chat.py      # 聊天端点
-│   │   │   └── agents.py    # 代理管理
-│   │   └── deps.py          # 依赖
-│   ├── schemas/             # Pydantic 模式
-│   │   ├── __init__.py
-│   │   ├── request.py       # 请求模式
-│   │   └── response.py      # 响应模式
-│   └── utils/               # 工具函数
-│       ├── __init__.py
-│       └── rate_limiter.py  # 速率限制
-├── tests/                   # 单元测试
-│   ├── __init__.py
-│   ├── test_llm_client.py
+│   ├── main.py                 # FastAPI 入口
+│   ├── config/settings.py      # pydantic-settings 配置
+│   ├── llm/client.py           # 通义千问客户端（重试、同步/异步、工具调用）
+│   ├── agents/
+│   │   ├── base.py             # Agent 基类（prompt 构建 → LLM 调用 → 响应处理）
+│   │   └── tutor.py            # Tutor / HomeworkGrader / StudyPlanner
+│   ├── prompts/templates.py    # System prompt 模板
+│   ├── tools/
+│   │   ├── calculator.py       # 数学计算工具
+│   │   └── knowledge_base.py   # 知识点查询工具
+│   ├── api/v1/
+│   │   ├── chat.py             # POST /api/v1/chat
+│   │   ├── agents.py           # GET /api/v1/agents
+│   │   ├── prompts.py          # GET /api/v1/prompts
+│   │   └── tools.py            # GET /api/v1/tools
+│   ├── schemas/                # Pydantic 请求/响应模型
+│   ├── logging/                # structlog 结构化日志
+│   ├── metrics/                # Prometheus 指标收集
+│   └── utils/rate_limiter.py   # 请求限流
+├── tests/
 │   ├── test_agents.py
-│   └── test_api.py
-├── .env.example             # 环境变量模板
-├── .gitignore
-├── pyproject.toml           # 依赖配置
-└── README.md
+│   ├── test_api.py
+│   └── test_llm_client.py
+├── .github/workflows/ci.yml
+├── pyproject.toml
+└── Dockerfile
 ```
 
-## API 端点
+## 技术栈
 
-| 端点 | 方法 | 描述 |
-|----------|--------|-------------|
-| `/health` | GET | 健康检查 |
-| `/api/v1/chat` | POST | 聊天完成 |
-| `/api/v1/agents` | GET | 列出代理 |
-| `/api/v1/agents/{name}` | GET | 获取代理信息 |
-| `/api/v1/prompts` | GET | 列出提示词 |
-| `/metrics` | GET | Prometheus 指标 |
+| 组件 | 选型 |
+|------|------|
+| 框架 | FastAPI + Uvicorn |
+| LLM | 通义千问（DashScope），兼容 OpenAI SDK |
+| 配置 | pydantic-settings（`.env` 文件） |
+| 日志 | structlog（JSON 格式） |
+| 监控 | prometheus-client + prometheus-fastapi-instrumentator |
+| 重试 | tenacity（指数退避） |
+| 限流 | 自研滑动窗口限流器 |
 
 ## 开发
 
 ```bash
-# 运行测试
-pytest tests/ -v
-
-# 热重载运行
-uvicorn astra_pro.main:app --reload
-
-# 代码检查
-ruff check .
-
-# 代码格式化
-black .
-
-# 类型检查
-mypy .
+pytest tests/ -v          # 运行测试
+ruff check .              # 代码检查
+black .                   # 格式化
+mypy .                    # 类型检查
 ```
 
 ## 许可证
