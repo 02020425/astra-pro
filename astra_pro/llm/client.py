@@ -8,17 +8,33 @@ from ..config import settings
 
 class LLMClient:
     def __init__(self):
-        self.client = OpenAI(
-            api_key=settings.dashscope_api_key,
-            base_url=settings.llm_base_url,
-            timeout=settings.llm_timeout,
-        )
-        self.async_client = AsyncOpenAI(
-            api_key=settings.dashscope_api_key,
-            base_url=settings.llm_base_url,
-            timeout=settings.llm_timeout,
-        )
+        self._client = None
+        self._async_client = None
         self.default_model = settings.llm_model
+    
+    @property
+    def client(self):
+        if self._client is None:
+            if not settings.dashscope_api_key:
+                raise ValueError("DASHSCOPE_API_KEY is not set")
+            self._client = OpenAI(
+                api_key=settings.dashscope_api_key,
+                base_url=settings.llm_base_url,
+                timeout=settings.llm_timeout,
+            )
+        return self._client
+    
+    @property
+    def async_client(self):
+        if self._async_client is None:
+            if not settings.dashscope_api_key:
+                raise ValueError("DASHSCOPE_API_KEY is not set")
+            self._async_client = AsyncOpenAI(
+                api_key=settings.dashscope_api_key,
+                base_url=settings.llm_base_url,
+                timeout=settings.llm_timeout,
+            )
+        return self._async_client
     
     @retry(
         stop=stop_after_attempt(3),
@@ -57,7 +73,7 @@ class LLMClient:
             tool_choice=tool_choice,
         )
         return response
-    
+
     @retry(
         stop=stop_after_attempt(3),
         wait=wait_exponential(multiplier=1, min=2, max=10),
