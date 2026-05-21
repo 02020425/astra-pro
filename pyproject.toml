@@ -12,6 +12,7 @@ dependencies = [
     "structlog>=23.0.0",
     "prometheus-client>=0.17.0",
     "prometheus-fastapi-instrumentator>=6.0.0",
+    "gradio>=6.0.0",
 ]
 
 [project.scripts]

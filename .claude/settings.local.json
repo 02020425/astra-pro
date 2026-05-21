@@ -21,7 +21,10 @@
       "Bash(python -c \"import sys,json; d=json.load\\(sys.stdin\\); [print\\(p,'-',d['paths'][p].get\\('get',{}\\).get\\('summary',''\\) or d['paths'][p].get\\('post',{}\\).get\\('summary',''\\)\\) for p in d['paths']]\")",
       "Bash(python -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\('Title:', d['info']['title']\\); print\\('Description:', d['info']['description']\\); [print\\(f'  {p}: {d[\\\\\"paths\\\\\"][p].get\\(\\\\\"get\\\\\",{}\\).get\\(\\\\\"summary\\\\\",\\\\\"\\\\\"\\) or d[\\\\\"paths\\\\\"][p].get\\(\\\\\"post\\\\\",{}\\).get\\(\\\\\"summary\\\\\",\\\\\"\\\\\"\\)}  tags={d[\\\\\"paths\\\\\"][p].get\\(\\\\\"get\\\\\",{}\\).get\\(\\\\\"tags\\\\\",\\\\\"\\\\\"\\) or d[\\\\\"paths\\\\\"][p].get\\(\\\\\"post\\\\\",{}\\).get\\(\\\\\"tags\\\\\",\\\\\"\\\\\"\\)}'\\) for p in d['paths']]\")",
       "Bash(python -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\('Title:', d['info']['title']\\); print\\('Description:', d['info']['description']\\); [print\\(f'  {p}: {d[\\\\\"paths\\\\\"][p].get\\(\\\\\"get\\\\\",{}\\).get\\(\\\\\"summary\\\\\",\\\\\"\\\\\"\\) or d[\\\\\"paths\\\\\"][p].get\\(\\\\\"post\\\\\",{}\\).get\\(\\\\\"summary\\\\\",\\\\\"\\\\\"\\)}'\\) for p in d['paths']]\")",
-      "Bash(taskkill //F //IM python.exe)"
+      "Bash(taskkill //F //IM python.exe)",
+      "Bash(.venv/Scripts/python -c \"from astra_pro.ui import demo; print\\('UI import OK'\\)\")",
+      "Bash(.venv/Scripts/python -c \"import gradio as gr; help\\(gr.mount_gradio_app\\)\")",
+      "Bash(.venv/Scripts/python -c ' *)"
     ]
   }
 }
