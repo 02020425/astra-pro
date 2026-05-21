@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from typing import List, Dict, Any, Optional
 from ..llm import llm_client
 from ..metrics import record_agent_call, record_llm_call, Timer
-from ..logging import logger
+from ..log import logger
 
 
 class BaseAgent(ABC):

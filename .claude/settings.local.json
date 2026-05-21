@@ -8,7 +8,11 @@
       "Bash(python -c \"import astra_pro.llm; print\\('Import OK:', dir\\(astra_pro.llm\\)\\)\")",
       "Bash(git add *)",
       "Bash(git commit *)",
-      "Bash(git push *)"
+      "Bash(git push *)",
+      "Bash(python -c \"from astra_pro.main import app; print\\('Import OK'\\)\")",
+      "Bash(python -m astra_pro.main)",
+      "Bash(curl -s http://localhost:8000/health)",
+      "Bash(curl *)"
     ]
   }
 }

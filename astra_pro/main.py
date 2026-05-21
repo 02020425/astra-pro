@@ -4,7 +4,7 @@ from prometheus_fastapi_instrumentator import Instrumentator
 from datetime import datetime
 from .api import v1_router
 from .config import settings
-from .logging import setup_logging, logger
+from .log import setup_logging, logger
 from .metrics import APP_INFO
 import uvicorn
 
