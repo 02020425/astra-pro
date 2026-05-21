@@ -42,7 +42,7 @@ class BaseAgent(ABC):
         with Timer() as timer:
             response = llm_client.chat_completion(messages)
         
-        record_llm_call(llm_client.client.default_model or "unknown", timer.elapsed)
+        record_llm_call(llm_client.default_model or "unknown", timer.elapsed)
         
         result = self.process_response(response)
         logger.info(f"Agent {self.name} completed request", response_length=len(result))
@@ -58,7 +58,7 @@ class BaseAgent(ABC):
         with Timer() as timer:
             response = await llm_client.async_chat_completion(messages)
         
-        record_llm_call(llm_client.async_client.default_model or "unknown", timer.elapsed)
+        record_llm_call(llm_client.default_model or "unknown", timer.elapsed)
         
         result = self.process_response(response)
         logger.info(f"Agent {self.name} completed request (async)", response_length=len(result))
