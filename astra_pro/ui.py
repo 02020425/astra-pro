@@ -1,5 +1,7 @@
 import gradio as gr
 from .agents import tutor_agent, homework_grader_agent, study_planner_agent
+from .utils.rate_limiter import RateLimiter
+from .config import settings
 
 AGENTS = {
     "学习辅导老师": tutor_agent,
@@ -7,8 +9,19 @@ AGENTS = {
     "学习规划师": study_planner_agent,
 }
 
+rate_limiter = RateLimiter(
+    max_requests=settings.rate_limit_max_requests,
+    time_window=settings.rate_limit_time_window,
+)
 
-def chat(message: str, history: list, agent_name: str):
+
+def chat(message: str, history: list, agent_name: str, request: gr.Request):
+    client_ip = request.client.host
+    import asyncio
+    allowed = asyncio.run(rate_limiter.is_allowed(client_ip))
+    if not allowed:
+        return "请求太频繁，请稍等几秒再试 🙏"
+
     agent = AGENTS.get(agent_name, tutor_agent)
     history_dicts = []
     for user_msg, bot_msg in history:

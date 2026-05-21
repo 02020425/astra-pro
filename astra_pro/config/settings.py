@@ -15,7 +15,7 @@ class Settings(BaseSettings):
     llm_base_url: str = "https://dashscope.aliyuncs.com/compatible-mode/v1"
     llm_timeout: int = 30
     
-    rate_limit_max_requests: int = 1000
+    rate_limit_max_requests: int = 60
     rate_limit_time_window: int = 60
     
     log_level: str = "INFO"
