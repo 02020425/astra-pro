@@ -24,7 +24,11 @@
       "Bash(taskkill //F //IM python.exe)",
       "Bash(.venv/Scripts/python -c \"from astra_pro.ui import demo; print\\('UI import OK'\\)\")",
       "Bash(.venv/Scripts/python -c \"import gradio as gr; help\\(gr.mount_gradio_app\\)\")",
-      "Bash(.venv/Scripts/python -c ' *)"
+      "Bash(.venv/Scripts/python -c ' *)",
+      "Bash(.venv/Scripts/python -c \"from astra_pro.ui import demo; print\\('OK'\\)\")",
+      "Bash(.venv/Scripts/python -m pytest tests/ -v)",
+      "Bash(git config *)",
+      "Bash(.venv/Scripts/python -c \"from astra_pro.agents import tutor_agent; print\\('Tools:', [t.name for t in tutor_agent.tools]\\); print\\('Defs:', len\\(tutor_agent.get_tool_definitions\\(\\)\\)\\)\")"
     ]
   }
 }

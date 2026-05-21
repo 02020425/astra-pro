@@ -1,12 +1,14 @@
 from .base import BaseAgent
 from typing import List, Dict, Optional
 from ..prompts import templates
+from ..tools import calculator_tool, knowledge_base_tool
 
 
 class TutorAgent(BaseAgent):
     def __init__(self):
         super().__init__("tutor")
         self.subjects = ["数学", "英语", "物理", "化学", "语文"]
+        self.tools = [calculator_tool, knowledge_base_tool]
     
     def build_prompt(self, user_input: str, history: Optional[List[Dict[str, str]]] = None) -> List[Dict[str, str]]:
         system_prompt = templates.get("tutor_system_prompt") or """
@@ -38,6 +40,7 @@ class TutorAgent(BaseAgent):
 class HomeworkGraderAgent(BaseAgent):
     def __init__(self):
         super().__init__("homework_grader")
+        self.tools = [calculator_tool]
     
     def build_prompt(self, user_input: str, history: Optional[List[Dict[str, str]]] = None) -> List[Dict[str, str]]:
         system_prompt = templates.get("grader_system_prompt") or """
@@ -69,6 +72,7 @@ class HomeworkGraderAgent(BaseAgent):
 class StudyPlannerAgent(BaseAgent):
     def __init__(self):
         super().__init__("study_planner")
+        self.tools = [knowledge_base_tool]
     
     def build_prompt(self, user_input: str, history: Optional[List[Dict[str, str]]] = None) -> List[Dict[str, str]]:
         system_prompt = templates.get("planner_system_prompt") or """
