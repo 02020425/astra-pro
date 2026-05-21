@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python -m pytest tests/ -v)",
+      "Bash(DASHSCOPE_API_KEY=\"\" python -c \"from astra_pro.config import settings; print\\('OK, dashscope_api_key:', repr\\(settings.dashscope_api_key\\)\\)\")",
+      "Bash(pip show *)",
+      "Bash(python -c \"import astra_pro.llm; print\\(dir\\(astra_pro.llm\\)\\)\")",
+      "Bash(python -c \"import astra_pro.llm; print\\('Import OK:', dir\\(astra_pro.llm\\)\\)\")",
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(git push *)"
+    ]
+  }
+}
