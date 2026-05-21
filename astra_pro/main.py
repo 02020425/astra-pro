@@ -12,8 +12,8 @@ setup_logging()
 APP_INFO.info({"version": "1.0.0", "environment": settings.environment})
 
 app = FastAPI(
-    title="Astra-Pro 教培 AI 代理系统",
-    description="一个生产级的教育辅导 AI 代理系统 API",
+    title="Astra-Pro 教培 AI Agent 系统",
+    description="基于通义千问的智能教辅后端服务，提供辅导答疑、作业批改、学习规划三类 AI Agent",
     version="1.0.0",
     docs_url="/docs",
     redoc_url="/redoc",
@@ -22,7 +22,7 @@ app = FastAPI(
 app.include_router(v1_router, prefix="/api/v1")
 
 
-@app.get("/health", tags=["health"])
+@app.get("/health", tags=["系统"], summary="健康检查")
 async def health_check():
     return {
         "status": "healthy",

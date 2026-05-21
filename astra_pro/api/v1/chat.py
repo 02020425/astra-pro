@@ -5,10 +5,10 @@ from ...schemas.request import ChatRequest, ChatMessage
 from ...schemas.response import ChatResponse
 from ...agents import tutor_agent, homework_grader_agent, study_planner_agent
 
-router = APIRouter()
+router = APIRouter(tags=["聊天"])
 
 
-@router.post("/chat", response_model=ChatResponse, dependencies=[Depends(check_rate_limit)])
+@router.post("/chat", response_model=ChatResponse, dependencies=[Depends(check_rate_limit)], summary="发送聊天消息")
 async def chat(request: ChatRequest):
     agent_map = {
         "tutor": tutor_agent,

@@ -12,7 +12,16 @@
       "Bash(python -c \"from astra_pro.main import app; print\\('Import OK'\\)\")",
       "Bash(python -m astra_pro.main)",
       "Bash(curl -s http://localhost:8000/health)",
-      "Bash(curl *)"
+      "Bash(curl *)",
+      "Bash(python -m venv .venv)",
+      "Bash(.venv/Scripts/pip install *)",
+      "Bash(.venv/Scripts/python -m astra_pro.main)",
+      "Bash(uv *)",
+      "Bash(.venv/Scripts/python run.py)",
+      "Bash(python -c \"import sys,json; d=json.load\\(sys.stdin\\); [print\\(p,'-',d['paths'][p].get\\('get',{}\\).get\\('summary',''\\) or d['paths'][p].get\\('post',{}\\).get\\('summary',''\\)\\) for p in d['paths']]\")",
+      "Bash(python -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\('Title:', d['info']['title']\\); print\\('Description:', d['info']['description']\\); [print\\(f'  {p}: {d[\\\\\"paths\\\\\"][p].get\\(\\\\\"get\\\\\",{}\\).get\\(\\\\\"summary\\\\\",\\\\\"\\\\\"\\) or d[\\\\\"paths\\\\\"][p].get\\(\\\\\"post\\\\\",{}\\).get\\(\\\\\"summary\\\\\",\\\\\"\\\\\"\\)}  tags={d[\\\\\"paths\\\\\"][p].get\\(\\\\\"get\\\\\",{}\\).get\\(\\\\\"tags\\\\\",\\\\\"\\\\\"\\) or d[\\\\\"paths\\\\\"][p].get\\(\\\\\"post\\\\\",{}\\).get\\(\\\\\"tags\\\\\",\\\\\"\\\\\"\\)}'\\) for p in d['paths']]\")",
+      "Bash(python -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\('Title:', d['info']['title']\\); print\\('Description:', d['info']['description']\\); [print\\(f'  {p}: {d[\\\\\"paths\\\\\"][p].get\\(\\\\\"get\\\\\",{}\\).get\\(\\\\\"summary\\\\\",\\\\\"\\\\\"\\) or d[\\\\\"paths\\\\\"][p].get\\(\\\\\"post\\\\\",{}\\).get\\(\\\\\"summary\\\\\",\\\\\"\\\\\"\\)}'\\) for p in d['paths']]\")",
+      "Bash(taskkill //F //IM python.exe)"
     ]
   }
 }

@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from ..deps import check_rate_limit
 from ...schemas.response import AgentListResponse, AgentInfo
 
-router = APIRouter()
+router = APIRouter(tags=["Agent 管理"])
 
 agents_info = [
     {
@@ -23,13 +23,13 @@ agents_info = [
 ]
 
 
-@router.get("/agents", response_model=AgentListResponse, dependencies=[Depends(check_rate_limit)])
+@router.get("/agents", response_model=AgentListResponse, dependencies=[Depends(check_rate_limit)], summary="列出所有 Agent")
 async def list_agents():
     agents = [AgentInfo(**info) for info in agents_info]
     return AgentListResponse(agents=agents)
 
 
-@router.get("/agents/{agent_type}", response_model=AgentInfo, dependencies=[Depends(check_rate_limit)])
+@router.get("/agents/{agent_type}", response_model=AgentInfo, dependencies=[Depends(check_rate_limit)], summary="获取指定 Agent 详情")
 async def get_agent(agent_type: str):
     agent_info = next((a for a in agents_info if a["type"] == agent_type), None)
     if not agent_info:
