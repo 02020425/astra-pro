@@ -13,7 +13,9 @@ cp .env.example .env
 # 编辑 .env，填入阿里云 DashScope API Key：
 #   DASHSCOPE_API_KEY=sk-xxxxxxxx
 
-# 启动服务
+# 启动服务（IDE 中可直接右键运行 run.py）
+python run.py
+# 或
 python -m astra_pro.main
 # → http://localhost:8000/docs
 ```
