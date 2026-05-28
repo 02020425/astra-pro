@@ -18,6 +18,16 @@ class Settings(BaseSettings):
     rate_limit_max_requests: int = 60
     rate_limit_time_window: int = 60
     
+    # Embedding Configuration
+    embedding_model: str = "text-embedding-v3"
+
+    # RAG / ChromaDB Configuration
+    chroma_persist_dir: str = "./chroma_db"
+    chunk_size: int = 500
+    chunk_overlap: int = 50
+    max_file_size_mb: int = 20
+    allowed_file_types: list[str] = ["pdf", "docx", "md", "txt"]
+
     log_level: str = "INFO"
 
 

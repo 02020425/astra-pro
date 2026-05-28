@@ -1,6 +1,6 @@
 # Astra-Pro — 教培 AI Agent 系统
 
-基于通义千问（Qwen）的智能教辅后端服务，提供辅导答疑、作业批改、学习规划三类 AI Agent。
+基于通义千问（Qwen）的智能教辅后端服务，提供辅导答疑、作业批改、学习规划三类 AI Agent，支持 RAG 知识库文档上传与语义检索。
 
 ## 快速开始
 
@@ -17,7 +17,36 @@ cp .env.example .env
 python run.py
 # 或
 python -m astra_pro.main
-# → http://localhost:8000/docs
+# → http://localhost:8000/docs  接口文档
+# → http://localhost:8000/ui/   Gradio 聊天 + 知识库管理
+```
+
+## 知识库管理（RAG）
+
+支持上传 PDF、DOCX、Markdown、TXT 文档，自动解析、分块、向量化并存入 ChromaDB。Agent 对话时通过语义检索自动调用知识库。
+
+### 上传文档
+
+```bash
+curl -X POST http://localhost:8000/api/v1/knowledge/upload \
+  -F "file=@数学知识点.pdf" \
+  -F "subject=数学"
+```
+
+### 语义搜索
+
+```bash
+curl -X POST http://localhost:8000/api/v1/knowledge/search \
+  -H "Content-Type: application/json" \
+  -d '{"query": "一元二次方程的求根公式", "top_k": 5}'
+```
+
+### 管理接口
+
+```bash
+curl http://localhost:8000/api/v1/knowledge/documents          # 文档列表
+curl http://localhost:8000/api/v1/knowledge/stats              # 统计信息
+curl -X DELETE http://localhost:8000/api/v1/knowledge/documents/数学知识点.pdf  # 删除
 ```
 
 ## 使用示例
@@ -65,6 +94,11 @@ curl -X POST http://localhost:8000/api/v1/chat \
 | `/api/v1/agents/{type}` | GET | 获取指定 Agent 详情 |
 | `/api/v1/prompts` | GET | 列出所有提示词模板 |
 | `/api/v1/tools` | GET | 列出可用工具 |
+| `/api/v1/knowledge/upload` | POST | 上传文档到知识库 |
+| `/api/v1/knowledge/search` | POST | 语义搜索知识库 |
+| `/api/v1/knowledge/documents` | GET | 列出已索引文档 |
+| `/api/v1/knowledge/documents/{source}` | DELETE | 删除文档及所有分块 |
+| `/api/v1/knowledge/stats` | GET | 知识库统计信息 |
 | `/metrics` | GET | Prometheus 指标 |
 
 ### Chat 请求体
@@ -88,7 +122,7 @@ curl -X POST http://localhost:8000/api/v1/chat \
 | 工具 | 功能 |
 |------|------|
 | `calculator` | 数学表达式计算，支持 `math` 模块函数 |
-| `knowledge_base` | 按学科/分类查询知识点（数学/英语/物理） |
+| `knowledge_base` | 语义搜索知识库，RAG 检索已上传的教学资料 |
 
 ## 项目结构
 
@@ -104,12 +138,19 @@ astra-pro/
 │   ├── prompts/templates.py    # System prompt 模板
 │   ├── tools/
 │   │   ├── calculator.py       # 数学计算工具
-│   │   └── knowledge_base.py   # 知识点查询工具
+│   │   └── knowledge_base.py   # 语义搜索知识库工具（RAG）
+│   ├── rag/
+│   │   ├── parser.py           # 文档解析（PDF/DOCX/MD/TXT）
+│   │   ├── chunker.py          # 中文感知文本分块
+│   │   ├── embedder.py         # DashScope 嵌入向量生成
+│   │   ├── vector_store.py     # ChromaDB 向量存储
+│   │   └── knowledge_service.py # RAG 编排层
 │   ├── api/v1/
 │   │   ├── chat.py             # POST /api/v1/chat
 │   │   ├── agents.py           # GET /api/v1/agents
 │   │   ├── prompts.py          # GET /api/v1/prompts
-│   │   └── tools.py            # GET /api/v1/tools
+│   │   ├── tools.py            # GET /api/v1/tools
+│   │   ├── knowledge.py        # 知识库 CRUD 端点
 │   ├── schemas/                # Pydantic 请求/响应模型
 │   ├── logging/                # structlog 结构化日志
 │   ├── metrics/                # Prometheus 指标收集
@@ -134,6 +175,9 @@ astra-pro/
 | 监控 | prometheus-client + prometheus-fastapi-instrumentator |
 | 重试 | tenacity（指数退避） |
 | 限流 | 自研滑动窗口限流器 |
+| RAG | ChromaDB + DashScope text-embedding-v3 + langchain-text-splitters |
+| 文档解析 | PyMuPDF (PDF) + python-docx (DOCX) |
+| UI | Gradio 双标签页（智能问答 + 知识库管理） |
 
 ## 开发
 

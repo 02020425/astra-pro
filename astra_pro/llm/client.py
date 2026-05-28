@@ -89,4 +89,29 @@ class LLMClient:
         return response
 
 
+    @retry(
+        stop=stop_after_attempt(3),
+        wait=wait_exponential(multiplier=1, min=2, max=10),
+        retry=retry_if_exception_type((APIError, APIConnectionError, RateLimitError)),
+    )
+    def get_embeddings(self, texts: List[str], model: Optional[str] = None) -> List[List[float]]:
+        response = self.client.embeddings.create(
+            model=model or settings.embedding_model,
+            input=texts,
+        )
+        return [item.embedding for item in sorted(response.data, key=lambda x: x.index)]
+
+    @retry(
+        stop=stop_after_attempt(3),
+        wait=wait_exponential(multiplier=1, min=2, max=10),
+        retry=retry_if_exception_type((APIError, APIConnectionError, RateLimitError)),
+    )
+    async def async_get_embeddings(self, texts: List[str], model: Optional[str] = None) -> List[List[float]]:
+        response = await self.async_client.embeddings.create(
+            model=model or settings.embedding_model,
+            input=texts,
+        )
+        return [item.embedding for item in sorted(response.data, key=lambda x: x.index)]
+
+
 llm_client = LLMClient()

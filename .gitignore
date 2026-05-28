@@ -41,6 +41,9 @@ ENV/
 # Logs
 *.log
 
+# ChromaDB
+chroma_db/
+
 # OS
 .DS_Store
 Thumbs.db

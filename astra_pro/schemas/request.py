@@ -18,6 +18,12 @@ class HomeworkGradeRequest(BaseModel):
     answer: str = Field(..., description="学生答案")
 
 
+class KnowledgeSearchRequest(BaseModel):
+    query: str = Field(..., description="搜索关键词或问题")
+    subject: Optional[str] = Field(None, description="按学科过滤（可选）")
+    top_k: int = Field(5, description="返回结果数量", ge=1, le=20)
+
+
 class StudyPlanRequest(BaseModel):
     goal: str = Field(..., description="学习目标")
     current_level: str = Field(..., description="当前水平")
